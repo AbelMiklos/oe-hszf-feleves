@@ -8,8 +8,8 @@ namespace GMYEL8_HSZF_2024251.Model.Entities
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Required]
-        public Guid TaxiCarId { get; set; } = Guid.NewGuid();
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Taxi car's licence plate is required;")]
+        public string TaxiCarId { get; set; } = string.Empty;
 
         [ForeignKey(nameof(TaxiCarId))]
         public virtual TaxiCar TaxiCar { get; set; } = default!;

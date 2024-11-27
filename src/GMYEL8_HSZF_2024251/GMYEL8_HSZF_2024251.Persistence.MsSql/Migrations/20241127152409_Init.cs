@@ -14,13 +14,12 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql.Migrations
                 name: "TaxiCars",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LicensePlate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LicensePlate = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Driver = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaxiCars", x => x.Id);
+                    table.PrimaryKey("PK_TaxiCars", x => x.LicensePlate);
                 });
 
             migrationBuilder.CreateTable(
@@ -28,7 +27,7 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TaxiCarId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TaxiCarId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     From = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     To = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Distance = table.Column<int>(type: "int", nullable: false),
@@ -42,7 +41,7 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql.Migrations
                         name: "FK_Services_TaxiCars_TaxiCarId",
                         column: x => x.TaxiCarId,
                         principalTable: "TaxiCars",
-                        principalColumn: "Id",
+                        principalColumn: "LicensePlate",
                         onDelete: ReferentialAction.Cascade);
                 });
 
