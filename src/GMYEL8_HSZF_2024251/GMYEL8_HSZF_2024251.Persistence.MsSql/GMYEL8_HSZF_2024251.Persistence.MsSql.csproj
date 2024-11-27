@@ -24,8 +24,4 @@
     <ProjectReference Include="..\GMYEL8_HSZF_2024251.Model\GMYEL8_HSZF_2024251.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataProviders\" />
-  </ItemGroup>
-
 </Project>
