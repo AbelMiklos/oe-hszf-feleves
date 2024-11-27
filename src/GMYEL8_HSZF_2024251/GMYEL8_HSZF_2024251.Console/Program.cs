@@ -1,4 +1,5 @@
-﻿using GMYEL8_HSZF_2024251.Persistence.MsSql;
+﻿using GMYEL8_HSZF_2024251.Application;
+using GMYEL8_HSZF_2024251.Persistence.MsSql;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +25,7 @@ namespace GMYEL8_HSZF_2024251.Console
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddMsSqlDbContext(connectionString);
+                    services.AddApplicationServices();
                 });
 
             return host.Build();
