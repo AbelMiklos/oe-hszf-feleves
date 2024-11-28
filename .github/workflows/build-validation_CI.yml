@@ -9,7 +9,7 @@ on:
 
 env:
   DOTNET_VERSION: '8.x'
-  SOLUTION_LOCATION: './src/GMYEL8_HSZF_2024251'
+  SOLUTION_LOCATION: './src/GMYEL8_HSZF_2024251/'
 
 jobs:
   build:
