@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Implementations;
 
 /// <inheritdoc cref="ITaxiRouteServiceDataProvider"/>
-public class TaxiRouteServiceDataProvider(AppDbContext context) : ITaxiRouteServiceDataProvider
+public class TaxiRouteDataProvider(AppDbContext context) : ITaxiRouteServiceDataProvider
 {
     private readonly AppDbContext _context = context;
 
