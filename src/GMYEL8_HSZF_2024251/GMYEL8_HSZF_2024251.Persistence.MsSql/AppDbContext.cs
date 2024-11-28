@@ -13,7 +13,7 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql
         {
             //Database.EnsureDeleted();
             //Database.EnsureCreated();
-            //Database.Migrate();
+            Database.Migrate();
         }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GMYEL8_HSZF_2024251.Persistence.MsSql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241127054313_Init")]
+    [Migration("20241127152409_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -47,8 +47,9 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql.Migrations
                     b.Property<int>("PaidAmount")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("TaxiCarId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("TaxiCarId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("To")
                         .IsRequired()
@@ -63,19 +64,14 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql.Migrations
 
             modelBuilder.Entity("GMYEL8_HSZF_2024251.Model.Entities.TaxiCar", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("LicensePlate")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Driver")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LicensePlate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("LicensePlate");
 
                     b.ToTable("TaxiCars");
                 });
