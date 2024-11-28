@@ -25,6 +25,7 @@ namespace GMYEL8_HSZF_2024251.Console
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddMsSqlDbContext(connectionString);
+                    services.AddMsSqlDataProviders();
                     services.AddApplicationServices();
                 });
 
