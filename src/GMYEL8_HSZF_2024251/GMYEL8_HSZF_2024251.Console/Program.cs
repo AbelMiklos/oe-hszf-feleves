@@ -1,4 +1,5 @@
 ﻿using GMYEL8_HSZF_2024251.Persistence.MsSql;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
