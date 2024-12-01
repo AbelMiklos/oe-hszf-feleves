@@ -10,10 +10,16 @@ public class TaxiCarDataProvider(AppDbContext context) : ITaxiCarServiceDataProv
 {
     private readonly AppDbContext _context = context;
 
+    public IQueryable<TaxiCar> ReadAll()
+    {
+        return _context.TaxiCars
+            .Include(t => t.Services)
+            .Select(t => t);
+    }
+
     public async Task<TaxiCar?> GetTaxiCarByIdAsync(string licencePlate)
     {
-        return await _context.TaxiCars
-            .Include(taxi => taxi.Services)
+        return await ReadAll()
             .FirstOrDefaultAsync(taxi => taxi.LicensePlate == licencePlate);
     }
 

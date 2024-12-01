@@ -5,6 +5,12 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
 public interface ITaxiCarServiceDataProvider
 {
     /// <summary>
+    ///    Retrieves all TaxiCar entities from the database.
+    /// </summary>
+    /// <returns>Taxi car entities.</returns>
+    IQueryable<TaxiCar> ReadAll();
+
+    /// <summary>
     ///     Retrieves a TaxiCar entity by its unique identifier.
     /// </summary>
     /// <param name="licencePlate">The unique identifier of the TaxiCar.</param>
