@@ -3,6 +3,8 @@ using GMYEL8_HSZF_2024251.Model.Entities;
 using GMYEL8_HSZF_2024251.Model.JsonWrappers;
 using GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
 
+using Microsoft.VisualBasic;
+
 using System.Text;
 using System.Text.Json;
 
@@ -84,17 +86,27 @@ public class TaxiCarDataSeederService(ITaxiCarServiceDataProvider taxiCarService
 
             if (existingTaxiCar is null)
             {
-                await _taxiCarServiceDataProvider.AddTaxiCarAsync(taxiCar);
+                _taxiCarServiceDataProvider.AddTaxiCar(taxiCar);
             }
             else
-            {
+            { 
                 foreach (var service in taxiCar.Services)
                 {
-                    existingTaxiCar.Services.Add(service);
-                }
+                    var newService = new Service
+                    {
+                        Distance = service.Distance,
+                        FareStartDate = service.FareStartDate,
+                        From = service.From,
+                        PaidAmount = service.PaidAmount,
+                        TaxiCarId = existingTaxiCar.LicensePlate,
+                        To = service.To
+                    };
 
-                await _taxiCarServiceDataProvider.UpdateTaxiCarAsync(existingTaxiCar);
+                    _taxiCarServiceDataProvider.AddServiceToTaxiCar(newService);
+                }
             }
         }
+
+        await _taxiCarServiceDataProvider.SaveChangesAsync();
     }
 }

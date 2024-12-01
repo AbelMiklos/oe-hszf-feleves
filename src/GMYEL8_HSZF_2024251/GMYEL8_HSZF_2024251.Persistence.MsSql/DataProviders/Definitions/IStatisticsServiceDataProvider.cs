@@ -1,5 +1,7 @@
 ﻿using GMYEL8_HSZF_2024251.Model.Entities;
 
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq.Expressions;
 
 namespace GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;

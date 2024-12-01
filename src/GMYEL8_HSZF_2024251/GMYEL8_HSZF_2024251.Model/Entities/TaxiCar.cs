@@ -11,5 +11,10 @@ namespace GMYEL8_HSZF_2024251.Model.Entities
         public string Driver { get; set; } = string.Empty;
 
         public virtual ICollection<Service> Services { get; set; } = [];
+
+        public override string ToString()
+        {
+            return $"Taxi car's license plate: {LicensePlate}, Driver: {Driver}";
+        }
     }
 }
