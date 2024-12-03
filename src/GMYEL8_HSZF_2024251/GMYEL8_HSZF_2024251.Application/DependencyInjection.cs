@@ -16,7 +16,7 @@ namespace GMYEL8_HSZF_2024251.Application
             services.AddSingleton<ITaxiCarDataSeederService, TaxiCarDataSeederService>();
             services.AddSingleton<ITaxiCarCRUDService, TaxiCarCRUDService>();
             services.AddSingleton<ITaxiRouteService, TaxiRouteService>();
-            services.AddSingleton<IStatisticsService, StatisticsService>();
+            services.AddSingleton<IStatisticsGeneratorService, StatisticsGeneratorService>();
             services.AddSingleton<IFileExportService, JsonFileExportService>();
             services.AddSingleton<ITaxiCarSearchService, TaxiCarSearchService>();
         }
