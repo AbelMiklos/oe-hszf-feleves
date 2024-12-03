@@ -1,10 +1,10 @@
-﻿using GMYEL8_HSZF_2024251.Application.Implementations.SearchServices;
+﻿using GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
 using GMYEL8_HSZF_2024251.Model.Entities;
 using GMYEL8_HSZF_2024251.Model.Search.Criterias;
 using GMYEL8_HSZF_2024251.Model.Search.Results;
 using GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
 
-namespace GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
+namespace GMYEL8_HSZF_2024251.Application.Implementations.SearchServices;
 
 /// <inheritdoc cref="ITaxiCarSearchService"/>
 public class TaxiCarSearchService(ITaxiCarServiceDataProvider taxiCarDataProvider) : ITaxiCarSearchService

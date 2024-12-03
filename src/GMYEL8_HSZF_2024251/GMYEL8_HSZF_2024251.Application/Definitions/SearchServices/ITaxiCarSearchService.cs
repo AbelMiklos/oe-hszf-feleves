@@ -2,7 +2,7 @@
 using GMYEL8_HSZF_2024251.Model.Search.Criterias;
 using GMYEL8_HSZF_2024251.Model.Search.Results;
 
-namespace GMYEL8_HSZF_2024251.Application.Implementations.SearchServices;
+namespace GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
 
 /// <summary>
 ///     Service for searching TaxiCar entities.
