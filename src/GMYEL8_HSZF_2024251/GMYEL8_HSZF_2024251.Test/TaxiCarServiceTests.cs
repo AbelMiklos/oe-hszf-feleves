@@ -48,7 +48,7 @@ namespace GMYEL8_HSZF_2024251.Test
             await _service.CreateTaxiCarAsync(taxiCar);
 
             // Assert
-            _mockDataProvider.Verify(x => x.AddTaxiCarAsync(taxiCar), Times.Once);
+            _mockDataProvider.Verify(x => x.AddTaxiCar(taxiCar), Times.Once);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace GMYEL8_HSZF_2024251.Test
             await _service.DeleteTaxiCarAsync(taxiCar);
 
             // Assert
-            _mockDataProvider.Verify(x => x.DeleteTaxiCarAsync(taxiCar), Times.Once);
+            _mockDataProvider.Verify(x => x.DeleteTaxiCar(taxiCar), Times.Once);
         }
 
         [Test]
@@ -130,16 +130,25 @@ namespace GMYEL8_HSZF_2024251.Test
         {
             // Arrange
             var existingTaxiCar = new TaxiCar { LicensePlate = "VWX234" };
-            var updatedTaxiCar = new TaxiCar { LicensePlate = "VWX234", /* Other updated properties */ };
+            var updatedTaxiCar = new TaxiCar { LicensePlate = "VWX234" };
+
             _mockDataProvider
                 .Setup(x => x.GetTaxiCarByIdAsync(existingTaxiCar.LicensePlate))
                 .ReturnsAsync(existingTaxiCar);
+
+            _mockDataProvider
+                .Setup(x => x.IsTaxiCarsExistsAsync(existingTaxiCar.LicensePlate))
+                .ReturnsAsync(true);
+
+            _mockDataProvider
+                .Setup(x => x.UpdateTaxiCar(It.IsAny<TaxiCar>()))
+                .Verifiable();
 
             // Act
             await _service.UpdateTaxiCarAsync(updatedTaxiCar);
 
             // Assert
-            _mockDataProvider.Verify(x => x.UpdateTaxiCarAsync(updatedTaxiCar), Times.Once);
+            _mockDataProvider.Verify(x => x.UpdateTaxiCar(updatedTaxiCar), Times.Once);
         }
     }
 }

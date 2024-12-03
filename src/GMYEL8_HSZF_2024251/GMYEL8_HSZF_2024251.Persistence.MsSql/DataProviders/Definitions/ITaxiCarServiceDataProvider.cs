@@ -21,19 +21,36 @@ public interface ITaxiCarServiceDataProvider
     ///    Adds the given TaxiCar entity to the database.
     /// </summary>
     /// <param name="taxiCar">TaxiCar entity to be added.</param>
-    Task AddTaxiCarAsync(TaxiCar taxiCar);
+    void AddTaxiCar(TaxiCar taxiCar);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="taxiCar"></param>
     /// <returns></returns>
-    Task UpdateTaxiCarAsync(TaxiCar taxiCar);
+    void UpdateTaxiCar(TaxiCar taxiCar);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="taxiToDelete"></param>
     /// <returns></returns>
-    Task DeleteTaxiCarAsync(TaxiCar taxiToDelete);
+    void DeleteTaxiCar(TaxiCar taxiToDelete);
+
+    /// <summary>
+    ///     Adds a service to a TaxiCar.
+    /// </summary>
+    /// <param name="service">The service to be added to the TaxiCar.</param>
+    void AddServiceToTaxiCar(Service service);
+
+    /// <summary>
+    ///    Retrieves if the TaxiCar exists in the database.
+    /// </summary>
+    /// <param name="licencePlate"></param>
+    Task<bool> IsTaxiCarsExistsAsync(string licencePlate);
+
+    /// <summary>
+    ///     Saves all changes made in this context to the database asynchronously.
+    /// </summary>
+    Task SaveChangesAsync();
 }

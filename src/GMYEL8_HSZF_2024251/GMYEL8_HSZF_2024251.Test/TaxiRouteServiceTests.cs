@@ -22,30 +22,18 @@ namespace GMYEL8_HSZF_2024251.Test
         }
 
         [Test]
-        public void AddTaxiRouteAsync_ShouldThrowException_WhenMaxServicePriceIsZero()
-        {
-            // Arrange
-            var service = new Service { TaxiCarId = "ABC123", PaidAmount = 500 };
-            _mockTaxiRouteDataProvider
-                .Setup(x => x.GetMaxServicePriceByCarAsync(service.TaxiCarId))
-                .ReturnsAsync(0);
-
-            // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(() => _taxiRouteService.AddTaxiRouteAsync(service));
-            Assert.That(ex.Message, Is.EqualTo($"Taxi car not found with the given '{service.TaxiCarId}' license plate."));
-        }
-
-        [Test]
         public async Task AddTaxiRouteAsync_ShouldAddTaxiRoute_WhenFareIsWithinThreshold()
         {
+            string taxiRouteId = "DEF456";
+
             // Arrange
-            var service = new Service { TaxiCarId = "DEF456", PaidAmount = 500 };
+            var service = new Service { TaxiCarId = taxiRouteId, PaidAmount = 500 };
             _mockTaxiRouteDataProvider
                 .Setup(x => x.GetMaxServicePriceByCarAsync(service.TaxiCarId))
                 .ReturnsAsync(300);
 
             // Act
-            await _taxiRouteService.AddTaxiRouteAsync(service);
+            await _taxiRouteService.AddTaxiRouteAsync(service, taxiRouteId);
 
             // Assert
             _mockTaxiRouteDataProvider.Verify(x => x.AddTaxiRouteAsync(service), Times.Once);
@@ -54,8 +42,10 @@ namespace GMYEL8_HSZF_2024251.Test
         [Test]
         public async Task AddTaxiRouteAsync_ShouldRaiseFareExceededEvent_WhenFareExceedsThreshold()
         {
+            string taxiRouteId = "GHI789";
+
             // Arrange
-            var service = new Service { TaxiCarId = "GHI789", PaidAmount = 1000 };
+            var service = new Service { TaxiCarId = taxiRouteId, PaidAmount = 1000 };
             var maxServicePrice = 400;
             var threshold = maxServicePrice * 2;
             FareExceededEventArgs? capturedEventArgs = null;
@@ -67,7 +57,7 @@ namespace GMYEL8_HSZF_2024251.Test
             _taxiRouteService.FareExceeded += (sender, e) => capturedEventArgs = e;
 
             // Act
-            await _taxiRouteService.AddTaxiRouteAsync(service);
+            await _taxiRouteService.AddTaxiRouteAsync(service, taxiRouteId);
 
             // Assert
             Assert.That(capturedEventArgs, Is.Not.Null);
@@ -79,7 +69,8 @@ namespace GMYEL8_HSZF_2024251.Test
         public async Task AddTaxiRouteAsync_ShouldNotRaiseFareExceededEvent_WhenFareIsWithinThreshold()
         {
             // Arrange
-            var service = new Service { TaxiCarId = "JKL012", PaidAmount = 500 };
+            string taxiRouteId = "JKL012";
+            var service = new Service { TaxiCarId = taxiRouteId, PaidAmount = 500 };
             var maxServicePrice = 300;
 
             _mockTaxiRouteDataProvider
@@ -90,7 +81,7 @@ namespace GMYEL8_HSZF_2024251.Test
             _taxiRouteService.FareExceeded += (sender, e) => eventRaised = true;
 
             // Act
-            await _taxiRouteService.AddTaxiRouteAsync(service);
+            await _taxiRouteService.AddTaxiRouteAsync(service, taxiRouteId);
 
             // Assert
             Assert.That(eventRaised, Is.False);

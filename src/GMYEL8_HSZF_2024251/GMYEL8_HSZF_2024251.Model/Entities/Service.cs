@@ -28,5 +28,15 @@ namespace GMYEL8_HSZF_2024251.Model.Entities
 
         [Required(ErrorMessage = "Fare start date is required.")]
         public DateTime FareStartDate { get; set; } = DateTime.Now;
+
+        public override string ToString()
+        {
+            return $"- Taxi Car ID: {TaxiCarId}\n" +
+                   $"- From: {From}\n" +
+                   $"- To: {To}\n" +
+                   $"- Distance: {Distance} km\n" +
+                   $"- Paid Amount: ${PaidAmount}\n" +
+                   $"- Fare Start Date: {FareStartDate:yyyy-MM-dd HH:mm}";
+        }
     }
 }

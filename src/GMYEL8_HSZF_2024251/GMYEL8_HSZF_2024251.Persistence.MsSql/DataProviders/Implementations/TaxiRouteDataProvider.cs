@@ -12,11 +12,12 @@ public class TaxiRouteDataProvider(AppDbContext context) : ITaxiRouteServiceData
 
     public async Task<int> GetMaxServicePriceByCarAsync(string licensePlate)
     {
-        return await _context.Services
+        var services = await _context.Services
             .Where(service => service.TaxiCar.LicensePlate == licensePlate)
-            .Select(service => service.PaidAmount)
-            .DefaultIfEmpty(0)
-            .MaxAsync();
+            .ToListAsync();
+
+        return services.DefaultIfEmpty(new Service { PaidAmount = 0 })
+            .Max(service => service.PaidAmount);
     }
 
     public async Task AddTaxiRouteAsync(Service taxiService)

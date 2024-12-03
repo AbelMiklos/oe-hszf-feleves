@@ -18,7 +18,8 @@ public class TaxiCarCRUDService(ITaxiCarServiceDataProvider dataProvider) : ITax
             throw new ArgumentException($"Taxi car with the given license plate {newTaxiCar.LicensePlate} already exists.");
         }
 
-        await _dataProvider.AddTaxiCarAsync(newTaxiCar);
+        _dataProvider.AddTaxiCar(newTaxiCar);
+        await _dataProvider.SaveChangesAsync();
     }
 
     public async Task DeleteTaxiCarAsync(TaxiCar taxiCar)
@@ -26,7 +27,8 @@ public class TaxiCarCRUDService(ITaxiCarServiceDataProvider dataProvider) : ITax
         var existingTaxiCar = await _dataProvider.GetTaxiCarByIdAsync(taxiCar.LicensePlate)
             ?? throw new ArgumentException($"Taxi car with the given license plate {taxiCar.LicensePlate} does not exists.");
 
-        await _dataProvider.DeleteTaxiCarAsync(taxiCar);
+        _dataProvider.DeleteTaxiCar(taxiCar);
+        await _dataProvider.SaveChangesAsync();
     }
 
     public async Task<TaxiCar> GetTaxiCarByIdAsync(string licencePlate)
@@ -39,11 +41,14 @@ public class TaxiCarCRUDService(ITaxiCarServiceDataProvider dataProvider) : ITax
 
     public async Task UpdateTaxiCarAsync(TaxiCar updatedTaxiCar)
     {
-        var taxiCarToModify = await _dataProvider.GetTaxiCarByIdAsync(updatedTaxiCar.LicensePlate)
-            ?? throw new ArgumentException($"Taxi car with the given {updatedTaxiCar.LicensePlate} does not exists.");
+        bool isTaxiCarExists = await _dataProvider.IsTaxiCarsExistsAsync(updatedTaxiCar.LicensePlate);
 
-        taxiCarToModify = updatedTaxiCar;
+        if (!isTaxiCarExists)
+        {
+            throw new ArgumentException($"Taxi car with the given {updatedTaxiCar.LicensePlate} does not exists.");
+        }
 
-        await _dataProvider.UpdateTaxiCarAsync(taxiCarToModify);
+        _dataProvider.UpdateTaxiCar(updatedTaxiCar);
+        await _dataProvider.SaveChangesAsync();
     }
 }

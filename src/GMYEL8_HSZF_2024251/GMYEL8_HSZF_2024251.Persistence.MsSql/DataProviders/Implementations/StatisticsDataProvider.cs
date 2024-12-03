@@ -1,9 +1,8 @@
 ﻿using GMYEL8_HSZF_2024251.Model.Entities;
+using GMYEL8_HSZF_2024251.Model.Statistics;
 using GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
 
 using Microsoft.EntityFrameworkCore;
-
-using System.Linq.Expressions;
 
 namespace GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Implementations;
 
@@ -12,17 +11,50 @@ public class StatisticsDataProvider(AppDbContext context) : IStatisticsServiceDa
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<Dictionary<TaxiCar, TResult>> GetAggregatedDataAsync<TResult>(
-        Expression<Func<Service, TaxiCar>> groupByExpression,
-        Expression<Func<IQueryable<IGrouping<TaxiCar, Service>>, IQueryable<KeyValuePair<TaxiCar, TResult>>>> aggregationExpression)
+    public async Task<Dictionary<TaxiCar, int>> GetShortTripsCountPerCarAsync(int maxDistance)
     {
-        var query = aggregationExpression.Compile()(
-            _context.Services
-                .Include(trip => trip.TaxiCar)
-                .AsQueryable()
-                .GroupBy(groupByExpression));
+        var query = await _context.Services
+            .Include(service => service.TaxiCar)
+            .Where(service => service.Distance < maxDistance)
+            .GroupBy(service => service.TaxiCar)
+            .Select(group => new KeyValuePair<TaxiCar, int>(group.Key, group.Count()))
+            .ToListAsync();
 
-        return (await query.ToListAsync())
-            .ToDictionary(pair => pair.Key, pair => pair.Value);
+        return query.ToDictionary(pair => pair.Key, pair => pair.Value);
+    }
+
+    public async Task<Dictionary<TaxiCar, string>> GetMostFrequentDestinationPerCarAsync()
+    {
+        var query = await _context.Services
+            .Include(service => service.TaxiCar)
+            .GroupBy(service => service.TaxiCar)
+            .Select(group => new KeyValuePair<TaxiCar, string>(
+                group.Key,
+                group.GroupBy(service => service.To)
+                     .OrderByDescending(destGroup => destGroup.Count())
+                     .Select(destGroup => destGroup.Key)
+                     .FirstOrDefault() ?? string.Empty))
+            .ToListAsync();
+
+        return query.ToDictionary(pair => pair.Key, pair => pair.Value);
+    }
+
+    public async Task<Dictionary<TaxiCar, TaxiCarServiceStatistic>> GetTripStatisticsPerCarAsync()
+    {
+        var query = await _context.Services
+            .Include(service => service.TaxiCar)
+            .GroupBy(service => service.TaxiCar)
+            .Select(group => new KeyValuePair<TaxiCar, TaxiCarServiceStatistic>(
+                group.Key,
+                new TaxiCarServiceStatistic
+                {
+                    TaxiCar = group.Key,
+                    AverageDistance = group.Average(service => service.Distance),
+                    LongestTrip = group.OrderByDescending(service => service.Distance).FirstOrDefault(),
+                    ShortestTrip = group.OrderBy(service => service.Distance).FirstOrDefault()
+                }))
+            .ToListAsync();
+
+        return query.ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 }

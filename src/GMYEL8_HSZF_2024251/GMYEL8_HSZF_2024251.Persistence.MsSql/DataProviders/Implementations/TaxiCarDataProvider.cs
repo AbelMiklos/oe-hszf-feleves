@@ -23,21 +23,33 @@ public class TaxiCarDataProvider(AppDbContext context) : ITaxiCarServiceDataProv
             .FirstOrDefaultAsync(taxi => taxi.LicensePlate == licencePlate);
     }
 
-    public async Task AddTaxiCarAsync(TaxiCar taxiCar)
+    public void AddTaxiCar(TaxiCar taxiCar)
     {
         _context.TaxiCars.Add(taxiCar);
-        await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateTaxiCarAsync(TaxiCar taxiCar)
+    public void UpdateTaxiCar(TaxiCar taxiCar)
     {
         _context.TaxiCars.Update(taxiCar);
-        await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteTaxiCarAsync(TaxiCar taxiToDelete)
+    public void DeleteTaxiCar(TaxiCar taxiToDelete)
     {
         _context.TaxiCars.Remove(taxiToDelete);
+    }
+
+    public void AddServiceToTaxiCar(Service service)
+    {
+        _context.Services.Add(service);
+    }
+
+    public async Task<bool> IsTaxiCarsExistsAsync(string licencePlate)
+    {
+        return await _context.TaxiCars.AnyAsync(taxi => taxi.LicensePlate == licencePlate);
+    }
+
+    public async Task SaveChangesAsync()
+    {
         await _context.SaveChangesAsync();
     }
 }

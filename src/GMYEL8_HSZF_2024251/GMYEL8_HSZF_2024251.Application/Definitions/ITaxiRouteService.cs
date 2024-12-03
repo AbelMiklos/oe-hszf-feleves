@@ -18,5 +18,5 @@ public interface ITaxiRouteService
     /// </summary>
     /// <param name="taxiService">The service details of the taxi route to be added.</param>
     /// <exception cref="ArgumentException">Thrown when the provided taxi car license plate does not match any of the existing taxi car licenses.</exception>
-    Task AddTaxiRouteAsync(Service taxiService);
+    Task AddTaxiRouteAsync(Service taxiService, string taxiCarId);
 }

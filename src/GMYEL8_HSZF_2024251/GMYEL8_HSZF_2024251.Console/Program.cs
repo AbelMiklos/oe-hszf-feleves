@@ -1,45 +1,58 @@
-﻿using GMYEL8_HSZF_2024251.Application;
-using GMYEL8_HSZF_2024251.Persistence.MsSql;
+﻿using ConsoleTools;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+using GMYEL8_HSZF_2024251.Application.Definitions;
+using GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
+using GMYEL8_HSZF_2024251.Application.Definitions.TaxiCarServices;
+using GMYEL8_HSZF_2024251.Console.UserInteractions;
 
-namespace GMYEL8_HSZF_2024251.Console
+using Microsoft.Extensions.DependencyInjection;
+
+namespace GMYEL8_HSZF_2024251.Console;
+
+public class Program
 {
-    public class Program
+    public static async Task Main()
     {
-        public static async Task Main()
-        {
-            var configuration = GetConfiguration();
+        var configuration = AppStart.ReadConfiguration();
 
-            var host = CreateAppHost(configuration);
-            await host.StartAsync();
-        }
+        var host = AppStart.CreateAppHost(configuration);
+        await host.StartAsync();
 
-        private static IHost CreateAppHost(IConfiguration configuration)
-        {
-            string connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new ArgumentNullException("Connection string is not set in appsettings.");
+        var menu = new ConsoleMenu()
+            .Add("Seed data from JSON file", async () =>
+            {
+                var taxiCarDataSeedService = host.Services.GetRequiredService<ITaxiCarDataSeederService>();
+                var userInteraction = new FileReadInteraction(taxiCarDataSeedService);
 
-            var host = Host.CreateDefaultBuilder()
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddMsSqlDbContext(connectionString);
-                    services.AddMsSqlDataProviders();
-                    services.AddApplicationServices();
-                });
+                await userInteraction.ExecuteAsync();
+            })
+            .Add("Data maintain", async () =>
+            {
+                var taxiCarCRUDService = host.Services.GetRequiredService<ITaxiCarCRUDService>();
+                var taxiRouteService = host.Services.GetRequiredService<ITaxiRouteService>();
 
-            return host.Build();
-        }
+                var dataMaintainInteraction = new DataMaintainInteraction(taxiCarCRUDService, taxiRouteService);
 
-        private static IConfiguration GetConfiguration()
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false)
-                .Build();
+                await dataMaintainInteraction.ExecuteAsync();
+            })
+            .Add("Statistics", async () =>
+            {
+                var statisticsService = host.Services.GetRequiredService<IStatisticsGeneratorService>();
+                var fileExportService = host.Services.GetRequiredService<IFileExportService>();
 
-            return configuration;
-        }
+                var statisticsInteraction = new StatisticsInteraction(statisticsService, fileExportService);
+
+                await statisticsInteraction.ExecuteAsync();
+            })
+            .Add("Search routes by car", async () =>
+            {
+                var taxiCarSearchService = host.Services.GetRequiredService<ITaxiCarSearchService>();
+                var searchRoutesByCarInteraction = new SearchRoutesByCarInteraction(taxiCarSearchService);
+
+                await searchRoutesByCarInteraction.ExecuteAsync();
+            })
+            .Add("Exit", () => Environment.Exit(0));
+
+        await menu.ShowAsync();
     }
 }

@@ -12,21 +12,18 @@ public class TaxiRouteService(ITaxiRouteServiceDataProvider taxiRouteServiceData
 
     public event EventHandler<FareExceededEventArgs>? FareExceeded;
 
-    public async Task AddTaxiRouteAsync(Service taxiService)
+    public async Task AddTaxiRouteAsync(Service taxiService, string taxiCarId)
     {
         int maxServicePrice = await _taxiRouteServiceDataProvider.GetMaxServicePriceByCarAsync(taxiService.TaxiCarId);
 
-        if (maxServicePrice == 0)
-        {
-            throw new ArgumentException($"Taxi car not found with the given '{taxiService.TaxiCarId}' license plate.");
-        }
-
         int threshold = maxServicePrice * 2;
 
-        if (taxiService.PaidAmount > threshold)
+        if (maxServicePrice != 0 && taxiService.PaidAmount > threshold)
         {
             OnFareExceeded(new FareExceededEventArgs(taxiService.PaidAmount, threshold));
         }
+
+        taxiService.TaxiCarId = taxiCarId;
 
         await _taxiRouteServiceDataProvider.AddTaxiRouteAsync(taxiService);
     }
