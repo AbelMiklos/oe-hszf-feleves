@@ -1,18 +1,30 @@
 ﻿using GMYEL8_HSZF_2024251.Application.Definitions;
-using GMYEL8_HSZF_2024251.Model.JsonWrappers;
 
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace GMYEL8_HSZF_2024251.Application.Implementations;
 
 public class JsonFileExportService : IFileExportService
 {
-    //public void ExportData(TaxiCarWrapper dataToExport, string? outputPath = null)
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
+
+    public JsonFileExportService()
+    {
+        _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true,
+        };
+    }
+
     public void ExportData(object dataToExport, string? outputPath = null)
     {
         if (string.IsNullOrWhiteSpace(outputPath))
         {
-            outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "default_statistics_export.json");
+            outputPath = Path.Combine("./default_statistics_export.json");
         }
 
         var directory = Path.GetDirectoryName(outputPath);
@@ -33,9 +45,9 @@ public class JsonFileExportService : IFileExportService
             throw new Exception("No write permission");
         }
 
-        var jsonData = JsonSerializer.Serialize(dataToExport, new JsonSerializerOptions { WriteIndented = true });
+        var jsonData = JsonSerializer.Serialize(dataToExport, _jsonSerializerOptions);
 
-        File.WriteAllText(outputPath, jsonData);
+        File.WriteAllText(outputPath, jsonData, Encoding.UTF8);
     }
 
     private bool HasWritePermission(string? directory)
