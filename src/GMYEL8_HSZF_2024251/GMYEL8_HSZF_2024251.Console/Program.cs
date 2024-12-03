@@ -1,6 +1,7 @@
 ﻿using ConsoleTools;
 
 using GMYEL8_HSZF_2024251.Application.Definitions;
+using GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
 using GMYEL8_HSZF_2024251.Application.Definitions.TaxiCarServices;
 using GMYEL8_HSZF_2024251.Console.UserInteractions;
 
@@ -36,12 +37,19 @@ public class Program
             })
             .Add("Statistics", async () =>
             {
-                var statisticsService = host.Services.GetRequiredService<IStatisticsService>();
+                var statisticsService = host.Services.GetRequiredService<IStatisticsGeneratorService>();
                 var fileExportService = host.Services.GetRequiredService<IFileExportService>();
 
                 var statisticsInteraction = new StatisticsInteraction(statisticsService, fileExportService);
 
                 await statisticsInteraction.ExecuteAsync();
+            })
+            .Add("Search routes by car", async () =>
+            {
+                var taxiCarSearchService = host.Services.GetRequiredService<ITaxiCarSearchService>();
+                var searchRoutesByCarInteraction = new SearchRoutesByCarInteraction(taxiCarSearchService);
+
+                await searchRoutesByCarInteraction.ExecuteAsync();
             })
             .Add("Exit", () => Environment.Exit(0));
 

@@ -34,7 +34,7 @@ public static class AppStart
 
         host.ConfigureLogging(logging =>
         {
-            logging.SetMinimumLevel(LogLevel.Warning);
+            logging.SetMinimumLevel(LogLevel.Error);
         });
 
         return host.Build();
