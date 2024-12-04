@@ -57,16 +57,20 @@ public class StatisticsInteraction(IStatisticsGeneratorService statisticsGenerat
     {
         string? outputPath = GetOutputPath("trip statistics per taxi cars");
 
-        try
-        {
-            await _statisticsGeneratorService.GetTripStatisticsPerCarAsync(outputPath);
+        await _statisticsGeneratorService.GetTripStatisticsPerCarAsync(outputPath);
 
-            Con.WriteLine("Data exported successfully.");
-        }
-        catch (Exception ex)
-        {
-            Con.WriteLine($"Error during export: {ex.Message}");
-        }
+        Con.WriteLine("Data exported successfully.");
+
+        //try
+        //{
+        //    await _statisticsGeneratorService.GetTripStatisticsPerCarAsync(outputPath);
+
+        //    Con.WriteLine("Data exported successfully.");
+        //}
+        //catch (Exception ex)
+        //{
+        //    Con.WriteLine($"Error during export: {ex.Message}");
+        //}
     }
 
     private string? GetOutputPath(string prompt)
