@@ -11,7 +11,7 @@ public class CustomExceptionHandlingMiddleware : ICustomMiddleware
     {
         try
         {
-            await next();
+            Task.WaitAll(next());
         }
         catch (BusinessException ex)
         {
