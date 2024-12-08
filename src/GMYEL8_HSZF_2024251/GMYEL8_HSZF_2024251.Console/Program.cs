@@ -26,43 +26,50 @@ public class Program
 
     private static ConsoleMenu CreateMenu(IHost appHost)
     {
-        var middlewarePipeline = appHost.Services.GetRequiredService<MiddlewarePipeline>();
-        middlewarePipeline
+        var middlewarePipeline = appHost.Services.GetRequiredService<IMiddlewarePipeline>()
             .Use(appHost.Services.GetRequiredService<ICustomMiddleware>());
 
-        return new ConsoleMenu()
-            .Add("Seed data from JSON file", async () => await middlewarePipeline.ExecuteAsync(async () =>
-            {
-                var taxiCarDataSeedService = appHost.Services.GetRequiredService<ITaxiCarDataSeederService>();
-                var userInteraction = new FileReadInteraction(taxiCarDataSeedService);
-
-                await userInteraction.ExecuteAsync();
-            }))
-            .Add("Data maintain", async () => await middlewarePipeline.ExecuteAsync(async () =>
-            {
-                var taxiCarCRUDService = appHost.Services.GetRequiredService<ITaxiCarCRUDService>();
-                var taxiRouteService = appHost.Services.GetRequiredService<ITaxiRouteService>();
-
-                var dataMaintainInteraction = new DataMaintainInteraction(taxiCarCRUDService, taxiRouteService);
-
-                await dataMaintainInteraction.ExecuteAsync();
-            }))
-            .Add("Statistics", async () => await middlewarePipeline.ExecuteAsync(async () =>
-            {
-                var statisticsService = appHost.Services.GetRequiredService<IStatisticsGeneratorService>();
-                var fileExportService = appHost.Services.GetRequiredService<IFileExportService>();
-
-                var statisticsInteraction = new StatisticsInteraction(statisticsService, fileExportService);
-
-                await statisticsInteraction.ExecuteAsync();
-            }))
-            .Add("Search routes by car", async () => await middlewarePipeline.ExecuteAsync(async () =>
-            {
-                var taxiCarSearchService = appHost.Services.GetRequiredService<ITaxiCarSearchService>();
-                var searchRoutesByCarInteraction = new SearchRoutesByCarInteraction(taxiCarSearchService);
-
-                await searchRoutesByCarInteraction.ExecuteAsync();
-            }))
+        return new ConsoleMenuWithMiddleware(middlewarePipeline)
+            .Add("Seed data from JSON file", async () => await RunFileReadInteraction(appHost))
+            .Add("Data maintain", async () => await RunDataMaintainUserInteraction(appHost, middlewarePipeline))
+            .Add("Statistics", async () => await RunStatisticsUserInteraction(appHost, middlewarePipeline))
+            .Add("Search routes by car", async () => await RunSearchRoutesByCarInteraction(appHost))
             .Add("Exit", () => Environment.Exit(0));
+    }
+
+    private static async Task RunFileReadInteraction(IHost appHost)
+    {
+        var taxiCarDataSeedService = appHost.Services.GetRequiredService<ITaxiCarDataSeederService>();
+        var userInteraction = new FileReadInteraction(taxiCarDataSeedService);
+
+        await userInteraction.ExecuteAsync();
+    }
+
+    private static async Task RunDataMaintainUserInteraction(IHost appHost, IMiddlewarePipeline middlewarePipeline)
+    {
+        var taxiCarCRUDService = appHost.Services.GetRequiredService<ITaxiCarCRUDService>();
+        var taxiRouteService = appHost.Services.GetRequiredService<ITaxiRouteService>();
+
+        var dataMaintainInteraction = new DataMaintainInteraction(taxiCarCRUDService, taxiRouteService, middlewarePipeline);
+
+        await dataMaintainInteraction.ExecuteAsync();
+    }
+
+    private static async Task RunStatisticsUserInteraction(IHost appHost, IMiddlewarePipeline middlewarePipeline)
+    {
+        var statisticsService = appHost.Services.GetRequiredService<IStatisticsGeneratorService>();
+        var fileExportService = appHost.Services.GetRequiredService<IFileExportService>();
+
+        var statisticsInteraction = new StatisticsInteraction(statisticsService, middlewarePipeline);
+
+        await statisticsInteraction.ExecuteAsync();
+    }
+
+    private static async Task RunSearchRoutesByCarInteraction(IHost appHost)
+    {
+        var taxiCarSearchService = appHost.Services.GetRequiredService<ITaxiCarSearchService>();
+        var searchRoutesByCarInteraction = new SearchRoutesByCarInteraction(taxiCarSearchService);
+
+        await searchRoutesByCarInteraction.ExecuteAsync();
     }
 }

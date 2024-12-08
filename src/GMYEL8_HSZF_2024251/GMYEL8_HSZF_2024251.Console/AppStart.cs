@@ -29,7 +29,7 @@ public static class AppStart
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddSingleton<MiddlewarePipeline>();
+                services.AddSingleton<IMiddlewarePipeline, MiddlewarePipeline>();
                 services.AddSingleton<ICustomMiddleware, CustomExceptionHandlingMiddleware>();
 
                 services.AddMsSqlDbContext(connectionString);
