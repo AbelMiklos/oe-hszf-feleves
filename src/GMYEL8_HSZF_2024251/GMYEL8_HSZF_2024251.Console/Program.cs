@@ -60,7 +60,7 @@ public class Program
         var statisticsService = appHost.Services.GetRequiredService<IStatisticsGeneratorService>();
         var fileExportService = appHost.Services.GetRequiredService<IFileExportService>();
 
-        var statisticsInteraction = new StatisticsInteraction(statisticsService, middlewarePipeline);
+        var statisticsInteraction = new StatisticsInteraction(statisticsService, fileExportService, middlewarePipeline);
 
         await statisticsInteraction.ExecuteAsync();
     }

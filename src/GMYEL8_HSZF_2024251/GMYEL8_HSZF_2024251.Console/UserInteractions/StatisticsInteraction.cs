@@ -8,10 +8,14 @@ using Con = System.Console;
 namespace GMYEL8_HSZF_2024251.Console.UserInteractions;
 
 /// <inheritdoc cref="IUserInteraction"/>
-public class StatisticsInteraction(IStatisticsGeneratorService statisticsGeneratorService, IMiddlewarePipeline middlewarePipeline)
-    : IUserInteraction
+public class StatisticsInteraction(
+    IStatisticsGeneratorService statisticsGeneratorService,
+    IFileExportService fileExportService,
+    IMiddlewarePipeline middlewarePipeline): IUserInteraction
 {
     private readonly IStatisticsGeneratorService _statisticsGeneratorService = statisticsGeneratorService;
+    private readonly IFileExportService _fileExportService = fileExportService;
+
     private readonly IMiddlewarePipeline _middlewarePipeline = middlewarePipeline;
 
     public async Task ExecuteAsync()
@@ -29,32 +33,42 @@ public class StatisticsInteraction(IStatisticsGeneratorService statisticsGenerat
     {
         string? outputPath = GetOutputPath("trips less than 10 km");
 
-        await _statisticsGeneratorService.GetShortTripsCountPerCarAsync(outputPath, 10);
+        var shortTripsPerCar = await _statisticsGeneratorService.GetShortTripsCountPerCarAsync(10);
+        _fileExportService.ExportData(shortTripsPerCar, outputPath);
 
-        Con.WriteLine("Data exported successfully.");
+        ExportedSuccessfully();
     }
 
     private async Task GetMostFrequentDestinationPerCarAsync()
     {
         string? outputPath = GetOutputPath("most frequent destinations per taxi cars");
 
-        await _statisticsGeneratorService.GetMostFrequentDestinationPerCarAsync(outputPath);
+        var mostFrequentDestinations = await _statisticsGeneratorService.GetMostFrequentDestinationPerCarAsync();
+        _fileExportService.ExportData(mostFrequentDestinations, outputPath);
 
-        Con.WriteLine("Data exported successfully.");
+        ExportedSuccessfully();
     }
 
     private async Task GetTripStatisticsPerCarAsync()
     {
         string? outputPath = GetOutputPath("trip statistics per taxi cars");
 
-        await _statisticsGeneratorService.GetTripStatisticsPerCarAsync(outputPath);
+        var tripStatisticsPerCar = await _statisticsGeneratorService.GetTripStatisticsPerCarAsync();
+        _fileExportService.ExportData(tripStatisticsPerCar, outputPath);
 
-        Con.WriteLine("Data exported successfully.");
+        ExportedSuccessfully();
     }
 
     private string? GetOutputPath(string prompt)
     {
         Con.Write($"Please provide the file name where you want to save the data for {prompt} (Hit [Enter] to save to default location): ");
         return Con.ReadLine();
+    }
+
+    private void ExportedSuccessfully()
+    {
+        Con.WriteLine("Data exported successfully.");
+        Con.WriteLine("Press any key to return to the menu...");
+        Con.ReadKey();
     }
 }
