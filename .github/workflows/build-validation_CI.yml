@@ -42,6 +42,15 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Restore dependencies
+
+  run-tests:
+    name: Run unit tests
+    needs: [build, dotnet-format]
+    runs-on: windows-latest
+
+    steps:
+    - name: Test
+      run: dotnet test ${{ env.SOLUTION_LOCATION }}
       run: dotnet restore ${{ env.SOLUTION_LOCATION }}
     - name: Format
       run: dotnet format --verify-no-changes --verbosity diagnostic ${{ env.SOLUTION_LOCATION }}
