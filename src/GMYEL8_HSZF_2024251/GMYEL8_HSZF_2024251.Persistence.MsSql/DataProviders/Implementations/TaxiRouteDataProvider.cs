@@ -25,5 +25,4 @@ public class TaxiRouteDataProvider(AppDbContext context) : ITaxiRouteServiceData
         _context.Services.Add(taxiService);
         await _context.SaveChangesAsync();
     }
-
 }

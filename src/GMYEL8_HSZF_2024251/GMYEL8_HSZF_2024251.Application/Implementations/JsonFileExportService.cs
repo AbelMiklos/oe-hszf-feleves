@@ -1,4 +1,5 @@
 ﻿using GMYEL8_HSZF_2024251.Application.Definitions;
+using GMYEL8_HSZF_2024251.Model.Exceptions;
 
 using System.Text;
 using System.Text.Encodings.Web;
@@ -42,7 +43,7 @@ public class JsonFileExportService : IFileExportService
 
         if (!HasWritePermission(directory))
         {
-            throw new Exception("No write permission");
+            throw new BusinessException("No write permission");
         }
 
         var jsonData = JsonSerializer.Serialize(dataToExport, _jsonSerializerOptions);

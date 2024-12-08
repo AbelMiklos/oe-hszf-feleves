@@ -6,13 +6,11 @@ using GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
 namespace GMYEL8_HSZF_2024251.Application.Implementations;
 
 /// <inheritdoc cref="IStatisticsGeneratorService"/>
-public class StatisticsGeneratorService(IStatisticsServiceDataProvider dataProvider, IFileExportService fileExportService) : IStatisticsGeneratorService
+public class StatisticsGeneratorService(IStatisticsServiceDataProvider dataProvider) : IStatisticsGeneratorService
 {
     private readonly IStatisticsServiceDataProvider _dataProvider = dataProvider;
 
-    private readonly IFileExportService _fileExportService = fileExportService;
-
-    public async Task GetShortTripsCountPerCarAsync(string? outpuPath, int maxDistance = 10)
+    public async Task<IEnumerable<TaxiCarWithTripsCount>> GetShortTripsCountPerCarAsync(int maxDistance = 10)
     {
         var statistics = await _dataProvider.GetShortTripsCountPerCarAsync(maxDistance);
 
@@ -23,10 +21,10 @@ public class StatisticsGeneratorService(IStatisticsServiceDataProvider dataProvi
                 TripsCount = pair.Value
             });
 
-        ExportData(tripsCountPerCar, outpuPath);
+        return tripsCountPerCar;
     }
 
-    public async Task GetMostFrequentDestinationPerCarAsync(string? outputPath)
+    public async Task<IEnumerable<TaxiCarMostFrequentDestination>> GetMostFrequentDestinationPerCarAsync()
     {
         var statistics = await _dataProvider.GetMostFrequentDestinationPerCarAsync();
 
@@ -37,10 +35,10 @@ public class StatisticsGeneratorService(IStatisticsServiceDataProvider dataProvi
                 MostFrequentDestination = pair.Value
             });
 
-        ExportData(frequentDestinationsPerCar, outputPath);
+        return frequentDestinationsPerCar;
     }
 
-    public async Task GetTripStatisticsPerCarAsync(string? outputPath)
+    public async Task<IEnumerable<TaxiCarServiceStatistic>> GetTripStatisticsPerCarAsync()
     {
         var statistics = await _dataProvider.GetTripStatisticsPerCarAsync();
 
@@ -53,11 +51,6 @@ public class StatisticsGeneratorService(IStatisticsServiceDataProvider dataProvi
                 ShortestTrip = pair.Value.ShortestTrip
             });
 
-        ExportData(tripStatisticsPerCar, outputPath);
-    }
-
-    private void ExportData<T>(IEnumerable<T> data, string? outputPath)
-    {
-        _fileExportService.ExportData(data, outputPath);
+        return tripStatisticsPerCar;
     }
 }

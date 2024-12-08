@@ -1,5 +1,6 @@
 ﻿using GMYEL8_HSZF_2024251.Application.Implementations.TaxiCarServices;
 using GMYEL8_HSZF_2024251.Model.Entities;
+using GMYEL8_HSZF_2024251.Model.Exceptions;
 using GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
 
 using Moq;
@@ -31,7 +32,7 @@ namespace GMYEL8_HSZF_2024251.Test
                 .ReturnsAsync(taxiCar);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(() => _service.CreateTaxiCarAsync(taxiCar));
+            var ex = Assert.ThrowsAsync<BusinessException>(() => _service.CreateTaxiCarAsync(taxiCar));
             Assert.That(ex.Message, Is.EqualTo($"Taxi car with the given license plate {taxiCar.LicensePlate} already exists."));
         }
 
@@ -61,7 +62,7 @@ namespace GMYEL8_HSZF_2024251.Test
                 .ReturnsAsync((TaxiCar)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(() => _service.DeleteTaxiCarAsync(taxiCar));
+            var ex = Assert.ThrowsAsync<BusinessException>(() => _service.DeleteTaxiCarAsync(taxiCar));
             Assert.That(ex.Message, Is.EqualTo($"Taxi car with the given license plate {taxiCar.LicensePlate} does not exists."));
         }
 
@@ -91,7 +92,7 @@ namespace GMYEL8_HSZF_2024251.Test
                 .ReturnsAsync((TaxiCar)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(() => _service.GetTaxiCarByIdAsync(licensePlate));
+            var ex = Assert.ThrowsAsync<BusinessException>(() => _service.GetTaxiCarByIdAsync(licensePlate));
             Assert.That(ex.Message, Is.EqualTo($"Taxi car with the given license plate {licensePlate} does not exists."));
         }
 
@@ -121,8 +122,8 @@ namespace GMYEL8_HSZF_2024251.Test
                 .ReturnsAsync((TaxiCar)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateTaxiCarAsync(updatedTaxiCar));
-            Assert.That(ex.Message, Is.EqualTo($"Taxi car with the given {updatedTaxiCar.LicensePlate} does not exists."));
+            var ex = Assert.ThrowsAsync<BusinessException>(() => _service.UpdateTaxiCarAsync(updatedTaxiCar));
+            Assert.That(ex.Message, Is.EqualTo($"Taxi car with the given license plate {updatedTaxiCar.LicensePlate} does not exists."));
         }
 
         [Test]

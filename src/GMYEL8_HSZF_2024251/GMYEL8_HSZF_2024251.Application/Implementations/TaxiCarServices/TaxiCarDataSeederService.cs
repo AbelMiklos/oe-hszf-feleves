@@ -1,9 +1,8 @@
 ﻿using GMYEL8_HSZF_2024251.Application.Definitions.TaxiCarServices;
 using GMYEL8_HSZF_2024251.Model.Entities;
+using GMYEL8_HSZF_2024251.Model.Exceptions;
 using GMYEL8_HSZF_2024251.Model.JsonWrappers;
 using GMYEL8_HSZF_2024251.Persistence.MsSql.DataProviders.Definitions;
-
-using Microsoft.VisualBasic;
 
 using System.Text;
 using System.Text.Json;
@@ -30,7 +29,8 @@ public class TaxiCarDataSeederService(ITaxiCarServiceDataProvider taxiCarService
     {
         if (!File.Exists(filePath))
         {
-            throw new FileNotFoundException($"The file at the given path '{filePath}' does not exist.");
+            string errorMessage = $"The file at the given path '{filePath}' does not exist.";
+            throw new BusinessException(errorMessage, new FileNotFoundException(errorMessage));
         }
     }
 
@@ -38,7 +38,8 @@ public class TaxiCarDataSeederService(ITaxiCarServiceDataProvider taxiCarService
     {
         if (Path.GetExtension(filePath) != ".json")
         {
-            throw new ArgumentException("The file must be in JSON format.");
+            string errorMessage = "The file must be in JSON format.";
+            throw new BusinessException(errorMessage, new ArgumentException(errorMessage));
         }
     }
 
@@ -50,7 +51,8 @@ public class TaxiCarDataSeederService(ITaxiCarServiceDataProvider taxiCarService
         }
         catch (Exception ex)
         {
-            throw new IOException($"Failed to read the file at '{filePath}'.", ex);
+            string errorMessage = $"Failed to read the file at '{filePath}'.";
+            throw new BusinessException(errorMessage, new IOException(errorMessage, ex));
         }
     }
 
@@ -66,13 +68,15 @@ public class TaxiCarDataSeederService(ITaxiCarServiceDataProvider taxiCarService
         }
         catch (JsonException ex)
         {
-            throw new InvalidDataException("The file content is not a valid JSON.", ex);
+            string errorMessage = "The file content is not a valid JSON.";
+            throw new BusinessException(errorMessage, new InvalidDataException(errorMessage, ex));
         }
 
         if (taxiCars is null
             || taxiCars.Count == 0)
         {
-            throw new InvalidDataException("The file does not contain any valid taxi car data.");
+            string errorMessage = "The file does not contain any valid taxi car data.";
+            throw new BusinessException(errorMessage, new InvalidDataException(errorMessage));
         }
 
         return taxiCars;
@@ -89,7 +93,7 @@ public class TaxiCarDataSeederService(ITaxiCarServiceDataProvider taxiCarService
                 _taxiCarServiceDataProvider.AddTaxiCar(taxiCar);
             }
             else
-            { 
+            {
                 foreach (var service in taxiCar.Services)
                 {
                     var newService = new Service

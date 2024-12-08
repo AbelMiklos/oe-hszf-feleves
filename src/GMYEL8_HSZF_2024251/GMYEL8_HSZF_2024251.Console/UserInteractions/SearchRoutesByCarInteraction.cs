@@ -1,22 +1,22 @@
 ﻿using GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
 using GMYEL8_HSZF_2024251.Model.Search.Criterias;
 
-using Microsoft.Identity.Client;
-
 using Con = System.Console;
 
 namespace GMYEL8_HSZF_2024251.Console.UserInteractions;
 
+/// <inheritdoc cref="IUserInteraction"/>
 public class SearchRoutesByCarInteraction(ITaxiCarSearchService taxiCarSearchService) : IUserInteraction
 {
     private readonly ITaxiCarSearchService _taxiCarSearchService = taxiCarSearchService;
 
     public async Task ExecuteAsync()
     {
-        const string separator = "===============================";
+        const string PrimarySeparator = "===============================";
+        const string SecondarySeparator = "-------------------------------";
 
         Con.WriteLine("Search taxi routes by taxi cars");
-        Con.WriteLine(separator);
+        Con.WriteLine(PrimarySeparator);
 
         string? licensePlate = GetStringUserInput("Taxi car's license plate (optional): ");
         string? driverName = GetStringUserInput("Taxi car's driver (optional): ");
@@ -43,7 +43,7 @@ public class SearchRoutesByCarInteraction(ITaxiCarSearchService taxiCarSearchSer
 
         var searchResult = await _taxiCarSearchService.SearchTaxiCarsAsync(searchCriteria);
 
-        Con.WriteLine(separator);
+        Con.WriteLine(PrimarySeparator);
 
         Con.WriteLine("Search results:");
 
@@ -57,6 +57,7 @@ public class SearchRoutesByCarInteraction(ITaxiCarSearchService taxiCarSearchSer
 
             foreach (var route in searchResult.Items)
             {
+                Con.WriteLine($"\t{SecondarySeparator}");
                 Con.WriteLine($"\t{route}");
             }
         }
@@ -64,6 +65,10 @@ public class SearchRoutesByCarInteraction(ITaxiCarSearchService taxiCarSearchSer
         {
             Con.WriteLine($"Taxi car with the given context not found");
         }
+
+        Con.WriteLine(PrimarySeparator);
+        Con.WriteLine("Press any key to return to the menu.");
+        Con.ReadKey();
     }
 
     private static string? GetStringUserInput(string prompt)

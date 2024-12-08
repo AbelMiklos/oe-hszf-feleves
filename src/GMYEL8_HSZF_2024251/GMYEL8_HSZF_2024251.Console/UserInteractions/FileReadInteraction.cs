@@ -15,15 +15,6 @@ public class FileReadInteraction(ITaxiCarDataSeederService taxiCarDataSeederServ
 
         await _taxiCarDataSeederService.SeedDataAsync(filePath);
 
-        //try
-        //{
-        //    await _taxiCarDataSeederService.SeedDataAsync(filePath);
-        //}
-        //catch (Exception)
-        //{
-        //    Con.WriteLine($"An error occurred while trying to seed data into the database.");
-        //}
-
         Con.WriteLine("Data has been successfully seeded into the database.");
     }
 
