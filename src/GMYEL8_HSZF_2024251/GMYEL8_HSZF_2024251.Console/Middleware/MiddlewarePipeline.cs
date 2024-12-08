@@ -1,10 +1,11 @@
 ﻿namespace GMYEL8_HSZF_2024251.Console.Middleware;
 
-public class MiddlewarePipeline
+/// <inheritdoc cref="IMiddlewarePipeline"/>
+public class MiddlewarePipeline : IMiddlewarePipeline
 {
     private readonly List<ICustomMiddleware> _middlewares = [];
 
-    public MiddlewarePipeline Use(ICustomMiddleware middleware)
+    public IMiddlewarePipeline Use(ICustomMiddleware middleware)
     {
         _middlewares.Add(middleware);
         return this;

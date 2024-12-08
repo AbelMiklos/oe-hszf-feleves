@@ -4,6 +4,7 @@ using Con = System.Console;
 
 namespace GMYEL8_HSZF_2024251.Console.Middleware;
 
+/// <inheritdoc cref="ICustomMiddleware"/>
 public class CustomExceptionHandlingMiddleware : ICustomMiddleware
 {
     public async Task InvokeAsync(Func<Task> next)
@@ -16,15 +17,20 @@ public class CustomExceptionHandlingMiddleware : ICustomMiddleware
         {
             Con.ForegroundColor = ConsoleColor.Red;
             Con.WriteLine($"Business error: {ex.Message}");
+            ReturnToMenu();
         }
         catch (Exception ex)
         {
             Con.ForegroundColor = ConsoleColor.Red;
             Con.WriteLine($"Unhandled error: {ex.Message}");
+            ReturnToMenu();
         }
-        finally
-        {
-            Con.ResetColor();
-        }
+    }
+
+    private static void ReturnToMenu()
+    {
+        Con.ResetColor();
+        Con.WriteLine("Press any key to return to the menu...");
+        Con.ReadKey();
     }
 }
