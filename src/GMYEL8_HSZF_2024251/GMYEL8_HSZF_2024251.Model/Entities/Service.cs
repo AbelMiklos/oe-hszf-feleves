@@ -31,11 +31,11 @@ namespace GMYEL8_HSZF_2024251.Model.Entities
 
         public override string ToString()
         {
-            return $"- Taxi Car ID: {TaxiCarId}\n" +
-                   $"- From: {From}\n" +
-                   $"- To: {To}\n" +
-                   $"- Distance: {Distance} km\n" +
-                   $"- Paid Amount: ${PaidAmount}\n" +
+            return $"- Taxi Car ID: {TaxiCarId}\n\t" +
+                   $"- From: {From}\n\t" +
+                   $"- To: {To}\n\t" +
+                   $"- Distance: {Distance} km\n\t" +
+                   $"- Paid Amount: ${PaidAmount}\n\t" +
                    $"- Fare Start Date: {FareStartDate:yyyy-MM-dd HH:mm}";
         }
     }

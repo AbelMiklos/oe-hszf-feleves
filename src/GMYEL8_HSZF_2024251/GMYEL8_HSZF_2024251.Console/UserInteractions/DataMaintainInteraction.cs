@@ -46,7 +46,8 @@ public class DataMaintainInteraction(
         };
 
         await _taxiCarCRUDService.CreateTaxiCarAsync(taxiCar);
-        Con.WriteLine("Taxi car added successfully.");
+
+        DoneSuccessfully("Taxi car added successfully.");
     }
 
     private async Task DeleteTaxiCarAsync()
@@ -57,7 +58,8 @@ public class DataMaintainInteraction(
         var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
 
         await _taxiCarCRUDService.DeleteTaxiCarAsync(taxiCar);
-        Con.WriteLine("Taxi car deleted successfully.");
+
+        DoneSuccessfully("Taxi car deleted successfully.");
     }
 
     private async Task GetTaxiCarByLicensePlateAsync()
@@ -67,7 +69,7 @@ public class DataMaintainInteraction(
 
         var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
 
-        Con.WriteLine(taxiCar);
+        DoneSuccessfully(taxiCar.ToString());
     }
 
     private async Task UpdateTaxiCarAsync()
@@ -84,7 +86,7 @@ public class DataMaintainInteraction(
 
         await _taxiCarCRUDService.UpdateTaxiCarAsync(updatedTaxiCar);
 
-        Con.WriteLine("Taxi car updated successfully.");
+        DoneSuccessfully("Taxi car updated successfully.");
     }
 
     private async Task AddTaxiRouteAsync()
@@ -114,7 +116,8 @@ public class DataMaintainInteraction(
         };
 
         await _taxiRouteService.AddTaxiRouteAsync(taxiService, licensePlate);
-        Con.WriteLine("Taxi route added successfully.");
+
+        DoneSuccessfully("Taxi route added successfully.");
     }
 
     private static string GetUserInput(string prompt)
@@ -137,5 +140,14 @@ public class DataMaintainInteraction(
         }
 
         return input;
+    }
+
+    private void DoneSuccessfully(string consoleOutput)
+    {
+        Con.ForegroundColor = ConsoleColor.Green;
+        Con.WriteLine(consoleOutput);
+        Con.ResetColor();
+        Con.WriteLine("Press any key to return to the menu...");
+        Con.ReadKey();
     }
 }

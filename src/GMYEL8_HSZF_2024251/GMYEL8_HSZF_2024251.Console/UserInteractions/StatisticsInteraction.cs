@@ -67,7 +67,9 @@ public class StatisticsInteraction(
 
     private void ExportedSuccessfully()
     {
+        Con.ForegroundColor = ConsoleColor.Green;
         Con.WriteLine("Data exported successfully.");
+        Con.ResetColor();
         Con.WriteLine("Press any key to return to the menu...");
         Con.ReadKey();
     }
