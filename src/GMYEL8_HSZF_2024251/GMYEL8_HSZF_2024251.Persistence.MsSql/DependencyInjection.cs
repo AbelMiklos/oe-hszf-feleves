@@ -13,7 +13,7 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(connectionString);
-                options.UseLazyLoadingProxies(false);
+                options.UseLazyLoadingProxies(true);
             });
 
             return services;
