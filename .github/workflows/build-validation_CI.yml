@@ -34,15 +34,18 @@ jobs:
     - name: Test
       run: dotnet test ${{ env.SOLUTION_LOCATION }}
 
-#  dotnet-format:
-#   name: .NET format check
-#   needs: build  
-#    runs-on: ubuntu-latest
+  dotnet-format:
+    name: .NET format check
+    needs: build-and-test  
+    runs-on: ubuntu-latest
 
-#    steps:
-#    - uses: actions/checkout@v3
-#    - name: Setup .NET
-#      uses: actions/setup-dotnet@v3
-#      with:
-#        dotnet-version: ${{ env.DOTNET_VERSION }}
-#    - name: Restore dependencies
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_LOCATION }}
+    - name: Format
+      run: dotnet format --verify-no-changes --verbosity diagnostic ${{ env.SOLUTION_LOCATION }}
