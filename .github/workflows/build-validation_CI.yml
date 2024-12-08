@@ -52,4 +52,4 @@ jobs:
 
     steps:
     - name: Test
-      run: dotnet test ${{ env.SOLUTION_LOCATION }}
+      run: dotnet test ./src/GMYEL8_HSZF_2024251/GMYEL8_HSZF_2024251.sln
