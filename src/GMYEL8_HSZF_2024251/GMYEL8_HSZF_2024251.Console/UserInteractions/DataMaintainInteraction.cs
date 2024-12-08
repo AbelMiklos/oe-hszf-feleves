@@ -90,7 +90,9 @@ public class DataMaintainInteraction(
     private async Task AddTaxiRouteAsync()
     {
         Con.WriteLine("Add new taxi route:");
+
         var licensePlate = GetUserInput("License plate: ");
+        var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
         var from = GetUserInput("Start location: ");
         var to = GetUserInput("Destination: ");
         var distance = GetIntUserInput("Distance (km): ");
