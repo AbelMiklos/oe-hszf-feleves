@@ -11,8 +11,6 @@ namespace GMYEL8_HSZF_2024251.Persistence.MsSql
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            //Database.EnsureDeleted();
-            //Database.EnsureCreated();
             Database.Migrate();
         }
     }
