@@ -1,12 +1,11 @@
 ﻿using GMYEL8_HSZF_2024251.Application.Definitions.SearchServices;
 using GMYEL8_HSZF_2024251.Model.Search.Criterias;
 
-using Microsoft.Identity.Client;
-
 using Con = System.Console;
 
 namespace GMYEL8_HSZF_2024251.Console.UserInteractions;
 
+/// <inheritdoc cref="IUserInteraction"/>
 public class SearchRoutesByCarInteraction(ITaxiCarSearchService taxiCarSearchService) : IUserInteraction
 {
     private readonly ITaxiCarSearchService _taxiCarSearchService = taxiCarSearchService;

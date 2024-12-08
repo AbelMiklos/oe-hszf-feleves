@@ -2,25 +2,31 @@
 
 using GMYEL8_HSZF_2024251.Application.Definitions;
 using GMYEL8_HSZF_2024251.Application.Definitions.TaxiCarServices;
+using GMYEL8_HSZF_2024251.Console.Middleware;
 using GMYEL8_HSZF_2024251.Model.Entities;
 
 using Con = System.Console;
 
 namespace GMYEL8_HSZF_2024251.Console.UserInteractions;
 
-public class DataMaintainInteraction(ITaxiCarCRUDService taxiCarCRUDService, ITaxiRouteService taxiRouteService) : IUserInteraction
+public class DataMaintainInteraction(
+    ITaxiCarCRUDService taxiCarCRUDService,
+    ITaxiRouteService taxiRouteService,
+    IMiddlewarePipeline middlewarePipeline) : IUserInteraction
 {
     private readonly ITaxiCarCRUDService _taxiCarCRUDService = taxiCarCRUDService;
     private readonly ITaxiRouteService _taxiRouteService = taxiRouteService;
 
+    private readonly IMiddlewarePipeline _middlewarePipeline = middlewarePipeline;
+
     public async Task ExecuteAsync()
     {
-        var subMenu = new ConsoleMenu()
-            .Add("Add taxi car", async () => await AddTaxiCarAsync())
-            .Add("Delete taxi car", async () => await DeleteTaxiCarAsync())
-            .Add("Get taxi car by licencse plate", async () => await GetTaxiCarByLicensePlateAsync())
-            .Add("Update taxi car", async () => await UpdateTaxiCarAsync())
-            .Add("Add taxi route", async () => await AddTaxiRouteAsync())
+        var subMenu = new ConsoleMenuWithMiddleware(_middlewarePipeline)
+            .Add("Add taxi car", AddTaxiCarAsync)
+            .Add("Delete taxi car", DeleteTaxiCarAsync)
+            .Add("Get taxi car by licencse plate", GetTaxiCarByLicensePlateAsync)
+            .Add("Update taxi car", UpdateTaxiCarAsync)
+            .Add("Add taxi route", AddTaxiRouteAsync)
             .Add("Back", ConsoleMenu.Close);
 
         await subMenu.ShowAsync();
@@ -39,15 +45,8 @@ public class DataMaintainInteraction(ITaxiCarCRUDService taxiCarCRUDService, ITa
             Driver = driverName
         };
 
-        try
-        {
-            await _taxiCarCRUDService.CreateTaxiCarAsync(taxiCar);
-            Con.WriteLine("Taxi car added successfully.");
-        }
-        catch (Exception ex)
-        {
-            Con.WriteLine($"Error: {ex.Message}");
-        }
+        await _taxiCarCRUDService.CreateTaxiCarAsync(taxiCar);
+        Con.WriteLine("Taxi car added successfully.");
     }
 
     private async Task DeleteTaxiCarAsync()
@@ -55,17 +54,10 @@ public class DataMaintainInteraction(ITaxiCarCRUDService taxiCarCRUDService, ITa
         Con.WriteLine("Delete taxi car:");
         var licensePlate = GetUserInput("License plate: ");
 
-        try
-        {
-            var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
+        var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
 
-            await _taxiCarCRUDService.DeleteTaxiCarAsync(taxiCar);
-            Con.WriteLine("Taxi car deleted successfully.");
-        }
-        catch (Exception ex)
-        {
-            Con.WriteLine($"Error: {ex.Message}");
-        }
+        await _taxiCarCRUDService.DeleteTaxiCarAsync(taxiCar);
+        Con.WriteLine("Taxi car deleted successfully.");
     }
 
     private async Task GetTaxiCarByLicensePlateAsync()
@@ -73,16 +65,9 @@ public class DataMaintainInteraction(ITaxiCarCRUDService taxiCarCRUDService, ITa
         Con.WriteLine("Get taxi car by licencse plate:");
         var licensePlate = GetUserInput("License plate: ");
 
-        try
-        {
-            var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
+        var taxiCar = await _taxiCarCRUDService.GetTaxiCarByIdAsync(licensePlate);
 
-            Con.WriteLine(taxiCar);
-        }
-        catch (Exception ex)
-        {
-            Con.WriteLine($"Error: {ex.Message}");
-        }
+        Con.WriteLine(taxiCar);
     }
 
     private async Task UpdateTaxiCarAsync()
@@ -97,16 +82,9 @@ public class DataMaintainInteraction(ITaxiCarCRUDService taxiCarCRUDService, ITa
             Driver = driverName
         };
 
-        try
-        {
-            await _taxiCarCRUDService.UpdateTaxiCarAsync(updatedTaxiCar);
+        await _taxiCarCRUDService.UpdateTaxiCarAsync(updatedTaxiCar);
 
-            Con.WriteLine("Taxi car updated successfully.");
-        }
-        catch (Exception ex)
-        {
-            Con.WriteLine($"Error: {ex.Message}");
-        }
+        Con.WriteLine("Taxi car updated successfully.");
     }
 
     private async Task AddTaxiRouteAsync()
@@ -128,20 +106,13 @@ public class DataMaintainInteraction(ITaxiCarCRUDService taxiCarCRUDService, ITa
             FareStartDate = DateTime.Now
         };
 
-        try
+        _taxiRouteService.FareExceeded += (sender, args) =>
         {
-            _taxiRouteService.FareExceeded += (sender, args) =>
-            {
-                Con.WriteLine($"Warning: The fare ({args.PaidAmount} HUF) exceeds the allowed threshold ({args.Threshold} HUF)!");
-            };
+            Con.WriteLine($"Warning: The fare ({args.PaidAmount} HUF) exceeds the allowed threshold ({args.Threshold} HUF)!");
+        };
 
-            await _taxiRouteService.AddTaxiRouteAsync(taxiService, licensePlate);
-            Con.WriteLine("Taxi route added successfully.");
-        }
-        catch (Exception ex)
-        {
-            Con.WriteLine($"Error: {ex.Message}");
-        }
+        await _taxiRouteService.AddTaxiRouteAsync(taxiService, licensePlate);
+        Con.WriteLine("Taxi route added successfully.");
     }
 
     private static string GetUserInput(string prompt)
